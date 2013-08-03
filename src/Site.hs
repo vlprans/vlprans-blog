@@ -5,8 +5,14 @@ import           Hakyll
 
 
 --------------------------------------------------------------------------------
+
+myHakyllConf :: Configuration
+myHakyllConf = defaultConfiguration
+  { providerDirectory = "resources"
+  }
+
 main :: IO ()
-main = hakyll $ do
+main = hakyllWith myHakyllConf $ do
     match "images/*" $ do
         route   idRoute
         compile copyFileCompiler
@@ -18,6 +24,7 @@ main = hakyll $ do
     match (fromList ["about.rst", "contact.markdown"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
+
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
