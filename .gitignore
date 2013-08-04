@@ -6,6 +6,5 @@ cabal-dev
 *.chs.h
 .virthualenv
 .hsenv
-site
 _cache/
 _site/

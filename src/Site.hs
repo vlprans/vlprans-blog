@@ -1,10 +1,8 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
+import           Site.Filters
 
-
---------------------------------------------------------------------------------
 
 myHakyllConf :: Configuration
 myHakyllConf = defaultConfiguration
@@ -17,14 +15,11 @@ main = hakyllWith myHakyllConf $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "css/*" $ do
-        route   idRoute
-        compile compressCssCompiler
+    match "styles/*.scss" sassRules
 
     match (fromList ["about.rst", "contact.markdown"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
-
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
