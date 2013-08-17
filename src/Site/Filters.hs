@@ -1,17 +1,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Site.Filters (
-  sassCompiler, sassRules
+  sassCompiler, lessCompiler, compileCssWith
   ) where
 
 import Hakyll
 
-sassCompiler :: Compiler (Item String)
+type CssCompiler = Compiler (Item String)
+
+sassCompiler :: CssCompiler
 sassCompiler =
   getResourceString >>=
   withItemBody (unixFilter "sass" ["-s", "--scss"])
 
-sassRules :: Rules ()
-sassRules = do
+lessCompiler :: CssCompiler
+lessCompiler =
+  getResourceString >>=
+  withItemBody (unixFilter "lessc" ["-","--yui-compress","-O2"])
+
+compileCssWith :: CssCompiler -> Rules ()
+compileCssWith compiler = do
   route $ setExtension "css"
-  compile $ sassCompiler >> compressCssCompiler
+  compile $ compiler >> compressCssCompiler

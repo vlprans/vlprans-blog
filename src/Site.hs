@@ -15,7 +15,7 @@ main = hakyllWith myHakyllConf $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "styles/*.scss" sassRules
+    match "styles/*.less" $ compileCssWith lessCompiler
 
     match (fromList ["about.rst", "contact.markdown"]) $ do
         route   $ setExtension "html"
