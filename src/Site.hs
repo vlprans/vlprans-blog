@@ -12,9 +12,14 @@ myHakyllConf = defaultConfiguration
 main :: IO ()
 main = hakyllWith myHakyllConf $ do
     match "images/*" $ do
-        route   idRoute
-        compile copyFileCompiler
+      route   idRoute
+      compile copyFileCompiler
 
+    match "js/*.js" $ do
+      route   idRoute
+      compile copyFileCompiler
+
+    match "styles/*.css" $ compileCssWith compressCssCompiler
     match "styles/*.less" $ compileCssWith lessCompiler
 
     match (fromList ["about.rst", "contact.markdown"]) $ do
