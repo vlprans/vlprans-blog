@@ -1,7 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 import           Data.Monoid (mappend)
 import           Hakyll
 import           Site.Filters
+import           Site.Fields
 
 
 myHakyllConf :: Configuration
@@ -22,17 +24,11 @@ main = hakyllWith myHakyllConf $ do
     match "styles/*.css" $ compileCssWith compressCssCompiler
     match "styles/*.less" $ compileCssWith lessCompiler
 
-    match (fromList ["about.rst", "contact.markdown"]) $ do
-        route   $ setExtension "html"
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
-            >>= relativizeUrls
-
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= loadAndApplyTemplate "templates/layout.html" postCtx
             >>= relativizeUrls
 
     create ["archive.html"] $ do
@@ -40,35 +36,21 @@ main = hakyllWith myHakyllConf $ do
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
-                    defaultContext
+                  listField "posts" postCtx (return posts) `mappend`
+                  constField "title" "Archives"            `mappend`
+                  defaultContext
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
-                >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+                >>= loadAndApplyTemplate "templates/layout.html" archiveCtx
                 >>= relativizeUrls
 
-
-    match "index.html" $ do
+    create ["index.html"] $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
-            let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Home"                `mappend`
-                    defaultContext
-
-            getResourceBody
-                >>= applyAsTemplate indexCtx
-                >>= loadAndApplyTemplate "templates/default.html" indexCtx
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/index.html" archiveCtx
+                >>= loadAndApplyTemplate "templates/layout.html" archiveCtx
                 >>= relativizeUrls
 
     match "templates/*" $ compile templateCompiler
-
-
---------------------------------------------------------------------------------
-postCtx :: Context String
-postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
-    defaultContext
