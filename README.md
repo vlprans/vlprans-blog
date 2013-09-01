@@ -5,7 +5,7 @@ My blog sources
 
 TODO:
 
-- Bootstrap and FontAwesome
+- Compass
 - Posts, slugs, archive
 - Social buttons
 - Disqus
